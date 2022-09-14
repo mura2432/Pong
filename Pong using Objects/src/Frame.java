@@ -15,6 +15,10 @@ public class Frame extends JPanel implements KeyListener, ActionListener{
 	Ball b = new Ball(350, 250, 50);
 	Paddle A = new Paddle(0, 175);
 	Paddle B = new Paddle(760, 175);
+	
+	int p1score = 0;
+	int p2score = 0;
+	
 	/* paint is getting called roughly 60x per second */
 	public void paint(Graphics g) {
 		super.paintComponent(g);
@@ -22,18 +26,23 @@ public class Frame extends JPanel implements KeyListener, ActionListener{
 		b.paint(g);
 		A.paint(g);
 		B.paint(g);
-		if(b.getX() == 0) {
-			b.setVelocityX(10);
-		}else if(b.getX() == 750) {
-			b.setVelocityX(-10);
-		}
 		
-		if(b.getY() == 0) {
-			b.setVelocityY(10);
-		}else if(b.getY() == 550) {
-			b.setVelocityY(-10);
-		}
+		Font f = new Font("Monospaced", Font.BOLD, 70);
+		g.setFont(f);
+		g.drawString(p1score + "", 200, 50);
+		g.drawString(p2score + "", 550, 50);
 		
+		if(b.getX() == 0 || b.getX() == 750) {
+			b.setVelocityX(-b.getVx());
+			if(b.getX() == 0) {
+				p2score++;
+			}else {
+				p1score++;
+			}
+		}
+		if(b.getY() == 0 || b.getY() == 500) {
+			b.setVelocityY(-b.getVy());
+		}
 		if(collisionA(b, A) || collisionB(b,B)) {
 			b.setVelocityX(-b.getVx());
 		}
@@ -49,23 +58,41 @@ public class Frame extends JPanel implements KeyListener, ActionListener{
 	public void keyPressed(KeyEvent arg0) {
 		//System.out.println(arg0.getKeyCode());
 		//87 = w, 83 = s, 38 = up, 40 = down
-		if(arg0.getKeyCode() == 87) {
-			A.setY(A.getY()-15);
+		if(b.getY() >= 0 && b.getY() <= 500) {
+			switch(arg0.getKeyCode()) {
+			case 87: 
+				A.setVy(-15);
+				break;
+			case 83:
+				A.setVy(15);
+				break;
+			case 38:
+				B.setVy(-15);
+				break;
+			case 40:
+				B.setVy(15);
+				break;
+			}	
 		}
-		if(arg0.getKeyCode() == 83) {
-			A.setY(A.getY()+15);
-		}
-		if(arg0.getKeyCode() == 38) {
-			B.setY(B.getY() - 15);
-		}
-		if(arg0.getKeyCode() == 40) {
-			B.setY(B.getY() + 15);
-		}
+		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-
+		switch(arg0.getKeyCode()) {
+		case 87: 
+			A.setVy(0);
+			break;
+		case 83:
+			A.setVy(0);
+			break;
+		case 38:
+			B.setVy(0);
+			break;
+		case 40:
+			B.setVy(0);
+			break;
+		}	
 		
 	}
 
@@ -74,21 +101,16 @@ public class Frame extends JPanel implements KeyListener, ActionListener{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	//Collision For A: If the ball's coordinates are less than or equal to the coordiantes of the paddle plus their respective lenghts, its a collision
 	public boolean collisionA(Ball b, Paddle p) {
-		return ((b.getX() <= p.getX() && b.getY() <= p.getY()) &&(b.getX() + b.getWidth() > p.getX()) && (b.getY() + b.getWidth() > p.getY())) || (p.getX() < b.getX() && p.getY() < b.getY()) &&(p.getX() + p.getWidth() > b.getX() && p.getY() + p.getHeight() > b.getY());
+		return (p.getX() + p.getWidth() >= b.getX() && p.getY() + p.getHeight() >= b.getY());
 	}
 	
 	public boolean collisionB(Ball b, Paddle p) {
-		return ((b.getX() >= p.getX() && b.getY() >= p.getY()) &&(b.getX() + b.getWidth() < p.getX()) && (b.getY() + b.getWidth() < p.getY())) || (p.getX() > b.getX() && p.getY() > b.getY()) &&(p.getX() + p.getWidth() < b.getX() && p.getY() + p.getHeight() < b.getY());
+		return (p.getX() == b.getX() + b.getWidth() && p.getY() + p.getHeight() >= b.getY());
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
@@ -106,7 +128,6 @@ public class Frame extends JPanel implements KeyListener, ActionListener{
 		
 		b.setVelocityX(10);
 		b.setVelocityY(10);
-		
 		t = new Timer(16, this);
 		t.start();
 		f.setVisible(true);
