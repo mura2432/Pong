@@ -1,36 +1,43 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
+/*
+*/
 public class Paddle {
 
 	// parts of a class - instance vars /properties
 	// attributes
-	private int x, y; //location
-	private int width, height; //size
+	private int x, y; // location
+	private int width, height; // size
 	private Color c;
 	private int vy;
-	
-	//constructor that allow setting of the location 
+
+	// constructor that allow setting of the location
 	public Paddle(int newX, int newY) {
-		//assigns values to the attributes
+		// assigns values to the attributes
 		x = newX;
 		y = newY;
 		width = 20;
 		height = 125;
 		c = Color.black;
 	}
-	
+
 	public void paint(Graphics g) {
-		
-		//update y
-		y += vy; //velocity in y affects position in the y
-		
-		//set the color
+
+		// update y
+		y += vy; // velocity in y affects position in the y
+
+		// set the color
 		g.setColor(c);
 		g.fillRect(x, y, width, height);
-	
+		if (y <= 0) {
+			y = 0;
+		}
+		if (y >= 500) {
+			y = 500;
+		}
 	}
-	
+
 	public int getX() {
 		return x;
 	}
@@ -79,11 +86,10 @@ public class Paddle {
 		this.vy = vy;
 	}
 
-	//SETTER - allows outsiders to set some value 
-	//in the class
+	// SETTER - allows outsiders to set some value
+	// in the class
 	public void setVelocity(int newVy) {
 		vy = newVy;
 	}
-	
-	
+
 }
